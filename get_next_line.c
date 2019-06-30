@@ -6,64 +6,38 @@
 /*   By: tmabunda <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 11:24:43 by tmabunda          #+#    #+#             */
-/*   Updated: 2019/06/29 11:32:57 by tmabunda         ###   ########.fr       */
+/*   Updated: 2019/06/30 14:09:48 by tmabunda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "libft.h/libft"
 
-static int	seach_newline(char **line, char **str)
+int	get_next_line(const int fd, char **line)
 {
-	char	*temp;
-	char	*temp1;
-	char	*c;
+	static char	*c[2147483647];
+	char		buffer[BUFF_SIZE + 1];
+	char		*tmp;
+	ssize_t		b;
+	int			endl;
 
-	temp = *str;
-	temp1 = *str;
-	c = ft_strchr(temp, '\n');
-	*line = ft_strsub(temp, 0, c - temp);
-	while (*temp)
-		temp++;
-	c++;
-	*str = ft_strsub(temp1, c - temp1, temp - c);
-	free(temp1);
-	return (1);
-}
-
-int			ft_short(char **line, char **str)
-{
-	if (*str && ft_strlen(*str) > 0)
+	if (fd < 0 || (!c[fd] && !(c[fd] = ft_strnew(1))) || !line)
+		return (-1);
+	while (!ft_strchr(c[fd], '\n') && (b = read(fd, buffer, BUFF_SIZE)) > 0)
 	{
-		*line = *str;
-		*str = NULL;
-		return (1);
+		buffer[b] = '\0';
+		tmp = c[fd];
+		c[fd] = ft_strjoin(c[fd], buffer);
+		ft_strdel(&tmp);
 	}
-	return (0);
-}
-
-int			get_next_line(const int fd, char **line)
-{
-	static char	*c[100];
-	char		str[BUFF_SIZE + 1];
-	char		*temp;
-	int			i;
-
-	if (line && fd >= 0 && read(fd, str, 0) == 0)
-	{
-		if (c[fd] != NULL && ft_strchr(c[fd], '\n'))
-			return (seach_newline(line, &c[fd]));
-		while ((i = read(fd, str, BUFF_SIZE)) > 0)
-		{
-			if (c[fd] == NULL)
-				c[fd] = ft_strdup("");
-			str[i] = '\0';
-			temp = c[fd];
-			c[fd] = ft_strjoin(temp, str);
-			free(temp);
-			if (ft_strchr(c[fd], '\n') != NULL)
-				return (seach_newline(line, &c[fd]));
-		}
-		return (ft_short(line, &c[fd]));
-	}
-	return (-1);
+	if (b == -1 || !*(tmp = c[fd]))
+		return (b == -1 ? -1 : 0);
+	if ((endl = (ft_strchr(c[fd], '\n') > 0)))
+		*line = ft_strsub(c[fd], 0, ft_strchr(c[fd], '\n') - c[fd]);
+	else
+		*line = ft_strdup(c[fd]);
+	c[fd] = ft_strsub(c[fd], (unsigned int)(ft_strlen(*line) + endl),
+			(size_t)(ft_strlen(c[fd]) - (ft_strlen(*line) + endl)));
+	ft_strdel(&tmp);
+	return (!(!c[fd] && !ft_strlen(*line)));
 }
