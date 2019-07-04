@@ -13,33 +13,50 @@
 #include "get_next_line.h"
 
 /*
- **  It checks if the line has anything or not so it can be able to read it  
- **  If the str is empty return 1
- **  if the string isnt empty then return 0
- */
-int			ft_readline(int fd,char **line)
+**  It checks if there another string or its the end of the file
+** if the string is empty it must return 1
+** If the string len is > 0 it must return 0
+*/
+int		ft_readline(char **line, char *str)
 {
-
-	char *temp;
-	char *str;
-	int reader;
-	static char *buffer[BUFF_SIZE + 1];
-	if (fd < 0 || !line)
-		return (-1);
-	if (!(reader = read(fd, buffer, BUFF_SIZE)))
+	if(str && ft_strlen(str) > 0)
 	{
-		buffer[reader] = '\0';
-		temp = ft_strjoin(str[fd], buffer);
-		free(str[fd]);
-		str[fd] = temp;
+		*line = str;
+		str = NULL;
+		return(1);
 	}
-	if (ft_strchr(str[fd], '\n') == '\n')
-		break ;
-	*line = ft_strdud(str[fd]);
-		return (reader);
+	else
+		return (0);
 }
 
-int		get_next_line(const int fd, char **line)
+static int	find_newline(char **line, char *str)
 {
+	char	*temp;
+	char	*str1;
+	char	*c;
+
+	temp = *str;
+	str1 = *str;
+	c = ft_strchr(temp. '\n');
+	*line = ft_strsub(temp, 0, c - temp);
+	while (*temp)
+		temp++;
+	c++;
+	*str = ft_strsub(str1, c - temp, temp - c);
+	free(temp);
+	return(1);
 
 }
+
+int		get_next_line(const int, int fd, char **line)
+{
+	char		buffer[BUFF_SIZE + 1];
+	char		*temp;
+	int		i;
+	static	char	*str[100];
+
+
+	
+
+
+
