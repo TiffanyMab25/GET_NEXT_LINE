@@ -6,28 +6,40 @@
 /*   By: tmabunda <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 11:24:43 by tmabunda          #+#    #+#             */
-/*   Updated: 2019/07/03 16:31:02 by tmabunda         ###   ########.fr       */
+/*   Updated: 2019/07/04 15:45:43 by tmabunda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int			ft_readline(char **line, char *str)
+/*
+ **  It checks if the line has anything or not so it can be able to read it  
+ **  If the str is empty return 1
+ **  if the string isnt empty then return 0
+ */
+int			ft_readline(int fd,char **line)
 {
-if (*str && ft_strlen(*str) > 0)
-	*line = *str;
-	*str = NULL;
-	return (1);
-	else
-		return (0);
+
+	char *temp;
+	char *str;
+	int reader;
+	static char *buffer[BUFF_SIZE + 1];
+	if (fd < 0 || !line)
+		return (-1);
+	if (!(reader = read(fd, buffer, BUFF_SIZE)))
+	{
+		buffer[reader] = '\0';
+		temp = ft_strjoin(str[fd], buffer);
+		free(str[fd]);
+		str[fd] = temp;
+	}
+	if (ft_strchr(str[fd], '\n') == '\n')
+		break ;
+	*line = ft_strdud(str[fd]);
+		return (reader);
 }
 
-int		search_newline(char **line , char *str)
+int		get_next_line(const int fd, char **line)
 {
-	char *temp1;
-	char temp2;
-	char c;
 
-	temp1 = str1;
-	temp2 = str2;
-	c = ft_strchar(temp1, '\n');
+}
